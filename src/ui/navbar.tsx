@@ -12,6 +12,11 @@ function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  const handleSignOut = () => {
+    signOut({ redirect: false });
+    alert('You have been signed out');
+  };
+
   return (
     <div>
       <nav className="bg-slate-500 text-white px-4 py-0.5 ">
@@ -126,7 +131,7 @@ function Navbar() {
                   <button
                     type="button"
                     className="block py-2 px-3 font-semibold"
-                    onClick={() => signOut()}
+                    onClick={handleSignOut}
                   >
                     LogOut
                   </button>
@@ -248,7 +253,7 @@ function Navbar() {
                 <button
                   type="button"
                   className="block py-2 px-3"
-                  onClick={() => signOut()}
+                  onClick={handleSignOut}
                 >
                   LogOut
                 </button>
