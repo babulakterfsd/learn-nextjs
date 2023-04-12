@@ -16,8 +16,11 @@ const Login = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
-  if (session?.user?.email) {
-    router.push('/');
+  if (session) {
+    const redirect = Array.isArray(router.query?.redirect)
+      ? router.query.redirect[0]
+      : router.query.redirect;
+    router.push(redirect || '/');
   }
 
   const handleLogin = async (e: any) => {
@@ -30,7 +33,6 @@ const Login = () => {
     } else {
       alert('Login successful');
       setLoading(false);
-      router.push('/');
     }
   };
 

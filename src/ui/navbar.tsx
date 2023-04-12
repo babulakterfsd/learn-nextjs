@@ -2,11 +2,13 @@
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -15,6 +17,7 @@ function Navbar() {
   const handleSignOut = () => {
     signOut({ redirect: false });
     alert('You have been signed out');
+    router.push('/');
   };
 
   return (

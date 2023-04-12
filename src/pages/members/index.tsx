@@ -79,7 +79,9 @@ export const getServerSideProps = async (context: any) => {
   if (!session) {
     return {
       redirect: {
-        destination: '/login',
+        destination: `/login?redirect=${
+          process.env.NEXTAUTH_URL + context?.resolvedUrl
+        }`,
         permanent: false,
       },
     };
