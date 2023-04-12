@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 import AuthLayout from '@/layouts/authLayout';
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -137,3 +138,25 @@ const AddMember = () => {
 };
 
 export default AddMember;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/login?redirect=${
+          process.env.NEXTAUTH_URL + context?.resolvedUrl
+        }`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+      // data: session ? 'this' : 'that'
+    },
+  };
+}

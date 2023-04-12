@@ -12,8 +12,6 @@ const client = new MongoClient(
 export default async function connectDB() {
   try {
     const connectedDB = await client.connect();
-    console.log('Connected to movieDB');
-
     return connectedDB;
   } catch (error) {
     console.log(error);

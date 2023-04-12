@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 import AuthLayout from '@/layouts/authLayout';
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -20,16 +21,21 @@ const UpdateEmployee = () => {
       axios
         .get(`/api/employeesdata/${updateemployeeID}`)
         .then((res) => {
-          setName(res.data.name);
-          setPosition(res.data.position);
-          setSalary(res.data.salary);
-          setComment(res.data.comment);
+          if (res.data != '') {
+            setName(res.data.name);
+            setPosition(res.data.position);
+            setSalary(res.data.salary);
+            setComment(res.data.comment);
+          } else {
+            alert('Employee not found!');
+            router.push('/employees');
+          }
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [updateemployeeID]);
+  }, [updateemployeeID, router]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -157,3 +163,25 @@ const UpdateEmployee = () => {
 };
 
 export default UpdateEmployee;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/login?redirect=${
+          process.env.NEXTAUTH_URL + context?.resolvedUrl
+        }`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+      // data: session ? 'this' : 'that'
+    },
+  };
+}

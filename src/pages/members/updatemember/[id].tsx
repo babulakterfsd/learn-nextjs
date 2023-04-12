@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 import AuthLayout from '@/layouts/authLayout';
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -22,17 +23,22 @@ const UpdateMember = () => {
       axios
         .get(`/api/members/${id}`)
         .then((res) => {
-          setId(res.data._id);
-          setName(res.data.name);
-          setEmail(res.data.email);
-          setSalary(res.data.salary);
-          setComment(res.data.comment);
+          if (res.data != '') {
+            setName(res.data.name);
+            setEmail(res.data.email);
+            setSalary(res.data.salary);
+            setComment(res.data.comment);
+            setId(res.data._id);
+          } else {
+            alert('Member not found!');
+            router.push('/members');
+          }
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [id]);
+  }, [id, router]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -164,3 +170,25 @@ const UpdateMember = () => {
 };
 
 export default UpdateMember;
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/login?redirect=${
+          process.env.NEXTAUTH_URL + context?.resolvedUrl
+        }`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+      // data: session ? 'this' : 'that'
+    },
+  };
+}
